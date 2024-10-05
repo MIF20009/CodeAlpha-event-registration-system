@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login or Register</title>
+        <style>
+            body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            }
+            .container {
+                max-width: 400px;
+                padding: 20px;
+                background-color: white;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }
+            form {
+                margin-bottom: 20px;
+            }
+            h1 {
+                text-align: center;
+            }
+            label {
+                display: block;
+                margin: 10px 0 5px;
+            }
+            input {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+            button {
+                width: 100%;
+                padding: 10px;
+                background-color: #007bff;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #0056b3;
+            }
+            .toggle-btn {
+                background-color: transparent;
+                color: #007bff;
+                border: none;
+                cursor: pointer;
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Login</h1>
+            <form id="login-form">
+                <label for="login-username">Username:</label>
+                <input type="text" id="login-username" name="username" required>
+
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" name="password" required>
+
+                <button type="submit">Login</button>
+            </form>
+
+            <button class="toggle-btn" id="show-register">Don't have an account? Register here</button>
+
+            <h1 id="register-title" style="display: none;">Create Account</h1>
+            <form id="register-form" style="display: none;">
+                <label for="register-name">Full Name:</label>
+                <input type="text" id="register-name" name="userFullName" required>
+
+                <label for="register-username">Username:</label>
+                <input type="text" id="register-username" name="username" required>
+
+                <label for="register-password">Password:</label>
+                <input type="password" id="register-password" name="password" required>
+
+                <button type="submit">Create Account</button>
+            </form>
+
+            <button class="toggle-btn" id="show-login">Already have an account? Login here</button>
+        </div>
+    </body>
+    <script>
+        const showRegisterBtn = document.getElementById("show-register");
+        const showLoginBtn = document.getElementById("show-login");
+        const registerForm = document.getElementById("register-form");
+        const loginForm = document.getElementById("login-form");
+        const registerTitle = document.getElementById("register-title");
+
+        showRegisterBtn.addEventListener("click", () => {
+            loginForm.style.display = "none";
+            showRegisterBtn.style.display = "none";
+            registerForm.style.display = "block";
+            registerTitle.style.display = "block";
+            showLoginBtn.style.display = "block";
+        });
+
+        showLoginBtn.addEventListener("click", () => {
+            loginForm.style.display = "block";
+            showRegisterBtn.style.display = "block";
+            registerForm.style.display = "none";
+            registerTitle.style.display = "none";
+            showLoginBtn.style.display = "none";
+        });
+
+        loginForm.addEventListener("submit", async(e) => {
+            e.preventDefault();
+            const username = document.getElementById("login-username").value;
+            const password = document.getElementById("login-password").value;
+            try{
+                const res = await fetch("/login", {
+                    method : "POST",
+                    headers : {"Content-type" : "application/json"},
+                    body : JSON.stringify({username, password}),
+                });
+                const data = await res.json();
+                if (res.ok){
+                    alert("Login successfull. ")
+                    window.location.href = "events.html"
+                } else{
+                    alert(data.message);
+                }
+            } catch(err){
+                alert("Login failed. Please try again. ");
+            }
+        });
+
+        registerForm.addEventListener("submit", async(e) => {
+            e.preventDefault();
+            const userFullName = document.getElementById("register-name");
+            const username = document.getElementById("register-username");
+            const password = document.getElementById("register-password");
+            try{
+                const res = await fetch("/registration", {
+                    method : "POST",
+                    headers : {"Content-type": "application/json"},
+                    body : JSON.stringify({userFullName, username, password}),
+                });
+                const data = await res.json();
+                if (res.ok){
+                    alert("Account created successfully. ");
+                    window.location.href = "/index.html";
+                } else{
+                    alert(data.message);
+                }
+            } catch(err){
+                alert("Registration failed. Please try again. ");
+            }
+        });
+    </script>
+</html>
