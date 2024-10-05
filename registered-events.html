@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Registered Events</title>
+        <style>
+             body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            }
+
+            h1 {
+                color: #333;
+            }
+
+            #registered-events-container {
+                margin-top: 20px;
+            }
+
+            .event {
+                border: 1px solid #ccc;
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+
+            .event h2 {
+                margin: 0;
+                font-size: 20px;
+            }
+
+            .event p {
+                margin: 5px 0;
+            }
+
+            button {
+                background-color: #dc3545;
+                color: white;
+                padding: 10px 15px;
+                border: none;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background-color: #c82333;
+            }
+            
+            .actions {
+                margin-top: 20px;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Your Registered Events</h1>
+        <div id="registered-events-container"></div>
+        <div class="actions">
+            <button id="back">Back</button>
+            <button id="logout">Logout</button>
+        </div>
+        <script>
+            const token = localStorage.getItem("token");
+
+            const fetchRegisteredEvents = async () => {
+                try{
+                    const res = await fetch("/view-user-events", {
+                        headers : {"Authorization" : "Bearer ${token}"},
+                    });
+                    const events = res.json();
+                    if (res.ok){
+                        displayRegisteredEvents(events.events);
+                    } else {
+                        alert("Error fetching registered events. ");
+                    }
+                } catch(err){
+                    console.error("Error fetching registered events: ",err);
+                }
+            };
+
+            const displayRegisteredEvents = (events) => {
+                const registeredEventsContainer = document.getElementById("registered-events-container");
+                registeredEventsContainer.innerHTML = "";
+
+                if(events.length == 0){
+                    registeredEventsContainer.innerHTML = "<p>No events registered.</p>";
+                    return;
+                }
+
+                events.forEach(event => {
+                    const eventDiv = document.createElement("div");
+                    eventDiv.classList.add("event");
+                    eventDiv.innerHTML = `
+                        <h2>${event.eventID.title}</h2>
+                        <p>Date: ${new Date(event.eventID.date).toLocaleDateString()}</p>
+                        <p>Location: ${event.eventID.location}</p>
+                        <button class="cancel-btn" data-registration-id="${event._id}">Cancel Registration</button>
+                    `;
+                    registeredEventsContainer.appendChild(eventDiv);
+                });
+                document.querySelectorAll(".cancel-btn").forEach(button => {
+                    button.addEventListener("click", (e) => {
+                        const registrationId = e.target.getAttribute("data-registration-id");
+                        cancelRegistration(registrationId);
+                    });
+                });
+            };
+
+            const cancelRegistration = async(registrationId) => {
+                try{
+                    const res = await fetch("/cancel-registration/${registrationId}", {
+                        method : "DELETE",
+                        headers : {"Authorization" : "Bearer ${token}"},
+                    });
+                    if (res.ok){
+                        alert("Rgeistration canceled. ");
+                        fetchRegisteredEvents();
+                    } else{
+                        const data = res.json();
+                        alert(data.message);
+                    }
+                } catch(err){
+                    console.error("Error cancelling registration: ",err);
+                }
+            };
+
+            document.getElementById("logout").addEventListener("click", () => {
+                localStorage.removeItem("token");
+                window.location.href = "/index.html";
+            });
+
+            document.getElementById("back").addEventListener("click", () => {
+                window.location.href = "/events.html";
+            });
+
+            fetchRegisteredEvents();
+        </script>
+    </body>
+</html>
