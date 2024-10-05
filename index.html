@@ -90,73 +90,73 @@
 
             <button class="toggle-btn" id="show-login">Already have an account? Login here</button>
         </div>
+        <script>
+            const showRegisterBtn = document.getElementById("show-register");
+            const showLoginBtn = document.getElementById("show-login");
+            const registerForm = document.getElementById("register-form");
+            const loginForm = document.getElementById("login-form");
+            const registerTitle = document.getElementById("register-title");
+    
+            showRegisterBtn.addEventListener("click", () => {
+                loginForm.style.display = "none";
+                showRegisterBtn.style.display = "none";
+                registerForm.style.display = "block";
+                registerTitle.style.display = "block";
+                showLoginBtn.style.display = "block";
+            });
+    
+            showLoginBtn.addEventListener("click", () => {
+                loginForm.style.display = "block";
+                showRegisterBtn.style.display = "block";
+                registerForm.style.display = "none";
+                registerTitle.style.display = "none";
+                showLoginBtn.style.display = "none";
+            });
+    
+            loginForm.addEventListener("submit", async(e) => {
+                e.preventDefault();
+                const username = document.getElementById("login-username").value;
+                const password = document.getElementById("login-password").value;
+                try{
+                    const res = await fetch("/login", {
+                        method : "POST",
+                        headers : {"Content-type" : "application/json"},
+                        body : JSON.stringify({username, password}),
+                    });
+                    const data = await res.json();
+                    if (res.ok){
+                        alert("Login successfull. ")
+                        window.location.href = "events.html"
+                    } else{
+                        alert(data.message);
+                    }
+                } catch(err){
+                    alert("Login failed. Please try again. ");
+                }
+            });
+    
+            registerForm.addEventListener("submit", async(e) => {
+                e.preventDefault();
+                const userFullName = document.getElementById("register-name");
+                const username = document.getElementById("register-username");
+                const password = document.getElementById("register-password");
+                try{
+                    const res = await fetch("/registration", {
+                        method : "POST",
+                        headers : {"Content-type": "application/json"},
+                        body : JSON.stringify({userFullName, username, password}),
+                    });
+                    const data = await res.json();
+                    if (res.ok){
+                        alert("Account created successfully. ");
+                        window.location.href = "/index.html";
+                    } else{
+                        alert(data.message);
+                    }
+                } catch(err){
+                    alert("Registration failed. Please try again. ");
+                }
+            });
+        </script>
     </body>
-    <script>
-        const showRegisterBtn = document.getElementById("show-register");
-        const showLoginBtn = document.getElementById("show-login");
-        const registerForm = document.getElementById("register-form");
-        const loginForm = document.getElementById("login-form");
-        const registerTitle = document.getElementById("register-title");
-
-        showRegisterBtn.addEventListener("click", () => {
-            loginForm.style.display = "none";
-            showRegisterBtn.style.display = "none";
-            registerForm.style.display = "block";
-            registerTitle.style.display = "block";
-            showLoginBtn.style.display = "block";
-        });
-
-        showLoginBtn.addEventListener("click", () => {
-            loginForm.style.display = "block";
-            showRegisterBtn.style.display = "block";
-            registerForm.style.display = "none";
-            registerTitle.style.display = "none";
-            showLoginBtn.style.display = "none";
-        });
-
-        loginForm.addEventListener("submit", async(e) => {
-            e.preventDefault();
-            const username = document.getElementById("login-username").value;
-            const password = document.getElementById("login-password").value;
-            try{
-                const res = await fetch("/login", {
-                    method : "POST",
-                    headers : {"Content-type" : "application/json"},
-                    body : JSON.stringify({username, password}),
-                });
-                const data = await res.json();
-                if (res.ok){
-                    alert("Login successfull. ")
-                    window.location.href = "events.html"
-                } else{
-                    alert(data.message);
-                }
-            } catch(err){
-                alert("Login failed. Please try again. ");
-            }
-        });
-
-        registerForm.addEventListener("submit", async(e) => {
-            e.preventDefault();
-            const userFullName = document.getElementById("register-name");
-            const username = document.getElementById("register-username");
-            const password = document.getElementById("register-password");
-            try{
-                const res = await fetch("/registration", {
-                    method : "POST",
-                    headers : {"Content-type": "application/json"},
-                    body : JSON.stringify({userFullName, username, password}),
-                });
-                const data = await res.json();
-                if (res.ok){
-                    alert("Account created successfully. ");
-                    window.location.href = "/index.html";
-                } else{
-                    alert(data.message);
-                }
-            } catch(err){
-                alert("Registration failed. Please try again. ");
-            }
-        });
-    </script>
 </html>

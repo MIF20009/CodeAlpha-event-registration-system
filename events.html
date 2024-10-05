@@ -1,0 +1,130 @@
+<!DOCTYPE html> 
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Available Events</title>
+        <style>
+             body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            }
+
+            h1 {
+                color: #333;
+            }
+
+            #events-container {
+                margin-top: 20px;
+            }
+
+            .event {
+                border: 1px solid #ccc;
+                padding: 15px;
+                margin-bottom: 10px;
+            }
+
+            .event h2 {
+                margin: 0;
+                font-size: 20px;
+            }
+
+            .event p {
+                margin: 5px 0;
+            }
+
+            button {
+                background-color: #007BFF;
+                color: white;
+                padding: 10px 15px;
+                border: none;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Available Events</h1>
+        <div id="events-container"></div>
+        <div class="actions">
+            <button id="registered-events-btn">View Registered Events</button>
+            <button id="logout">Logout</button>
+        </div>
+        <script>
+            const token = localStorage.getItem("token");
+
+            const fetchEvents = async () => {
+                try{
+                    const res = await fetch("/view-events", {
+                        headers : {"Authorization" : "Bearer ${token}"},
+                    });
+                    const events = await res.json();
+                    if (res.ok){
+                        displayEvents(events);
+                    } else{
+                        alert("Error fetching events. ");
+                    }
+                } catch(err) {
+                    console.error("error fetching events: ",err);
+                }
+            };
+
+            const displayEvents = (events) => {
+                const eventsContainer = document.getElementById("events-container");
+                eventsContainer.innerHTML = "";
+                events.forEach(event => {
+                    const eventDiv = document.createElement("div");
+                    eventDiv.classList.add("event");
+                    eventDiv.innerHTML = `
+                        <h2>${event.title}</h2>
+                        <p>Date: ${new Date(event.date).toLocaleDateString()}</p>
+                        <p>Location: ${event.location}</p>
+                        <button class="register-btn" data-event-id="${event._id}">Register</button>
+                    `;
+                    eventsContainer.appendChild(eventDiv);
+                });
+                document.querySelectorAll(".register-btn").forEach(button => {
+                    button.addEventListener("click", (e) => {
+                        const eventId = e.target.getAttribute("data-event-id");
+                        registerForEvent(eventId);
+                    });
+                });
+            };
+
+            const registerForEvent = async(eventId) => {
+                try{
+                    const res = await fetch("/register-for-event", {
+                        method : "POST",
+                        headers : {
+                            "Content-type" : "application/json",
+                            "Authorization" : "Bearer ${token}"
+                        },
+                        body : JSON.stringify({eventID : eventId}),
+                    });
+                    const data = res.json();
+                    if (res.ok){
+                        alert("Registered successfully. ");
+                    } else{
+                        alert(data.message);
+                    }
+                } catch(err){
+                    console.error("Error registering for event", err);
+                }
+            };
+
+            document.getElementById("logout").addEventListener("click", () => {
+                localStorage.removeItem("token");
+                window.location.href = "/index.html";
+            });
+
+            document.getElementById("registered-events-btn").addEventListener("click", () => {
+                window.location.href = "/registered-events.html";
+            });
+
+            fetchEvents();
+        </script>
+    </body>
+</html>

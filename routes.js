@@ -101,4 +101,6 @@ router.delete("/cancel-registration/:registrationID", authenticateToken, async (
     }
     await Registration.deleteOne({_id : regId});
     res.status(200).json({message : "Registration deleted. "});
-})
+});
+
+module.exports = router;
