@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin - Add Event</title>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 20px;
+            }
+
+            h1 {
+                color: #333;
+            }
+
+            form {
+                margin-top: 20px;
+            }
+
+            label {
+                display: block;
+                margin-bottom: 10px;
+            }
+
+            input, button {
+                padding: 10px;
+                margin-bottom: 10px;
+                width: 100%;
+                max-width: 400px;
+            }
+
+            button {
+                background-color: #28a745;
+                color: white;
+                border: none;
+                cursor: pointer;
+            }
+
+            button:hover {
+                background-color: #218838;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Add New Event</h1>
+        <form id="event-form">
+            <label for="title">Event Title:</label>
+            <input type="text" id="title" name="title" required>
+
+            <label for="date">Date:</label>
+            <input type="date" id="date" name="date" required>
+
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" required>
+
+            <button type="submit">Add Event</button>
+        </form>
+        <button id="logout">Logout</button>
+        <script>
+            const token = localStorage.getItem("token");
+
+            const checkAdmin = async () => {
+                try{
+                    const res = await fetch("/check-admin", {
+                        headers : {"Authorization" : `Bearer ${token}`},
+                    });
+                    const data = await res.json();
+                    if (!res.ok && !data.isAdmin){
+                        alert("Access denied. Admins only. ");
+                        window.location.href = "/index.html";
+                    }
+                } catch(err){
+                    console.error("Error verifying admin: ",err);
+                    window.location.href = "/index.html";
+                }
+            };
+
+            checkAdmin();
+
+            const eventForm =document.getElementById("event-form");
+            eventForm.addEventListener("submit", async(e) => {
+                e.preventDefault();
+                const title = document.getElementById("title").value;
+                const date = document.getElementById("date").value;
+                const location = document.getElementById("location").value;
+                try{
+                    const res = await fetch("/create-event", {
+                        method : "POST",
+                        headers : {
+                            "Content-type" : "application/json",
+                            "Authorization" : `Bearer ${token}`,
+                        },
+                        body : JSON.stringify({title, date, location}),
+                    });
+                    const data = await res.json();
+                    if (res.ok){
+                        alert("Event added successfully. ");
+                        eventForm.reset();
+                    } else{
+                        alert(data.message);
+                    }
+                } catch(err){
+                    console.error("Error creating event: ",err)
+                }
+            });
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById("date").setAttribute("min", today);
+
+            document.getElementById("logout").addEventListener("click", () => {
+                localStorage.removeItem("token");
+                window.location.href = "/index.html";
+            });
+        </script>
+    </body>
+</html>

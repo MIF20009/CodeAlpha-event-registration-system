@@ -63,9 +63,9 @@
             const fetchRegisteredEvents = async () => {
                 try{
                     const res = await fetch("/view-user-events", {
-                        headers : {"Authorization" : "Bearer ${token}"},
+                        headers : {"Authorization" : `Bearer ${token}`},
                     });
-                    const events = res.json();
+                    const events = await res.json();
                     if (res.ok){
                         displayRegisteredEvents(events.events);
                     } else {
@@ -108,13 +108,13 @@
                 try{
                     const res = await fetch("/cancel-registration/${registrationId}", {
                         method : "DELETE",
-                        headers : {"Authorization" : "Bearer ${token}"},
+                        headers : {"Authorization" : `Bearer ${token}`},
                     });
                     if (res.ok){
                         alert("Rgeistration canceled. ");
                         fetchRegisteredEvents();
                     } else{
-                        const data = res.json();
+                        const data = await res.json();
                         alert(data.message);
                     }
                 } catch(err){

@@ -31,11 +31,11 @@ router.post("/login", async (req,res) => {
     if (!existingUsername){
         return res.status(400).json({message : "Invalid username or password. "});
     }
-    const passwordsMatch = await bcrypt.compare(password, user.password);
+    const passwordsMatch = await bcrypt.compare(password, existingUsername.password);
     if (!passwordsMatch){
         return res.status(400).json({message : "Invalid username or password. "});
     }
-    const token = jwt.sign({userID : existingUsername._id},secret,{expiresIn : "1h"});
+    const token = jwt.sign({userID : existingUsername._id, role: existingUsername.role},secret,{expiresIn : "1h"});
     res.json({token});
 });
 
@@ -61,7 +61,7 @@ router.post("/register-for-event",authenticateToken, async (req,res) => {
         userID : req.user.userID,
     });
     await registration.save();
-    res.status(201).json({message : "Registered fro event. "});
+    res.status(201).json({message : "Registered for event. "});
 });
 
 //Viewing events
@@ -101,6 +101,15 @@ router.delete("/cancel-registration/:registrationID", authenticateToken, async (
     }
     await Registration.deleteOne({_id : regId});
     res.status(200).json({message : "Registration deleted. "});
+});
+
+//check admin
+router.get("/check-admin", authenticateToken, async (req,res) => {
+    if (req.user.role == "admin"){
+        res.json({isAdmin : true});
+    } else{
+        res.status(403).json({message : "Access denied. Admins only. "});
+    }
 });
 
 module.exports = router;
