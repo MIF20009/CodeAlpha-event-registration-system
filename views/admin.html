@@ -66,13 +66,13 @@
                         headers : {"Authorization" : `Bearer ${token}`},
                     });
                     const data = await res.json();
-                    if (!res.ok && !data.isAdmin){
+                    if (res.ok && !data.isAdmin){
                         alert("Access denied. Admins only. ");
-                        window.location.href = "/index.html";
+                        window.location.href = "/views/index.html";
                     }
                 } catch(err){
                     console.error("Error verifying admin: ",err);
-                    window.location.href = "/index.html";
+                    window.location.href = "/views/index.html";
                 }
             };
 
@@ -110,7 +110,7 @@
 
             document.getElementById("logout").addEventListener("click", () => {
                 localStorage.removeItem("token");
-                window.location.href = "/index.html";
+                window.location.href = "/views/index.html";
             });
         </script>
     </body>

@@ -16,19 +16,24 @@ mongoose.connect('mongodb://localhost:27017/event-registration-system', {
     .then(() => console.log("MongoDB connected"))
     .catch((err) => console.error("MongoDB connection error:", err));
 
-// Serve static files (CSS, JS, HTML)
-app.use(express.static(path.join(__dirname, "public"))); // 'public' folder for static files
-
 // Use the routes you defined
 app.use("/", routes);
 
 // Serve the HTML files (login, events, etc.)
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html")); // Your login page
+    res.sendFile(path.join(__dirname, "views", "index.html")); // Your login page
 });
 
-app.get("/events.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "events.html")); // Events page (when user logs in)
+app.get("/events", (req, res) => {
+    res.sendFile(path.join(__dirname, "views", "events.html")); // Events page (when user logs in)
+});
+
+app.get("/registered-events", (req, res) => {
+    res.sendFile(path.join(__dirname, "views", "registered-events.html")); // Registered events page
+});
+
+app.get("/admin", (req, res) => {
+    res.sendFile(path.join(__dirname, "views", "admin.html")); // Admin page
 });
 
 // Start the server

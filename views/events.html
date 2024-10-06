@@ -78,7 +78,7 @@
             checkAdmin();
             
             document.getElementById("admin-panel").addEventListener("click", () => {
-                window.location.href = "/admin.html";  
+                window.location.href = "/views/admin.html";  
             });
 
             const fetchEvents = async () => {
@@ -142,11 +142,11 @@
 
             document.getElementById("logout").addEventListener("click", () => {
                 localStorage.removeItem("token");
-                window.location.href = "/index.html";
+                window.location.href = "/views/index.html";
             });
 
             document.getElementById("registered-events-btn").addEventListener("click", () => {
-                window.location.href = "/registered-events.html";
+                window.location.href = "/views/registered-events.html";
             });
 
             fetchEvents();

@@ -7,21 +7,29 @@ const jwt = require("jsonwebtoken");
 const secret = "mostafa"
 
 //creating user
-router.post("/registration", async (req,res) => {
-    const {userFullName, username, password} = req.body;
-    const existingUser = await User.findOne({username});
-    if (existingUser){
-        return res.status(400).json({message : "This username already exists. "});
+router.post("/registration", async (req, res) => {
+    try {
+        const { userFullName, username, password } = req.body;
+
+        const existingUser = await User.findOne({ username });
+        if (existingUser) {
+            return res.status(400).json({ message: "This username already exists." });
+        }
+
+        const hashedPass = await bcrypt.hash(password, 10);
+        const user = new User({
+            userFullName,
+            username,
+            password: hashedPass,
+            role: "user", 
+        });
+
+        await user.save();
+        res.status(201).json({ message: "User registered successfully." });
+    } catch (error) {
+        console.error("Registration error:", error);
+        res.status(500).json({ message: "Registration failed. Please try again." });
     }
-    const hashedPass = await bcrypt.hash(password,10);
-    const user = new User({
-        userFullName,
-        username,
-        password : hashedPass,
-        role : "user",
-    })
-    await user.save();
-    res.status(202).json({message : "User registered successfully. "});
 });
 
 //login

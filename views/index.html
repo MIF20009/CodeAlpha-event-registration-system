@@ -126,7 +126,7 @@
                     const data = await res.json();
                     if (res.ok){
                         alert("Login successfull. ")
-                        window.location.href = "events.html"
+                        window.location.href = "/views/events.html"
                     } else{
                         alert(data.message);
                     }
@@ -137,9 +137,9 @@
     
             registerForm.addEventListener("submit", async(e) => {
                 e.preventDefault();
-                const userFullName = document.getElementById("register-name");
-                const username = document.getElementById("register-username");
-                const password = document.getElementById("register-password");
+                const userFullName = document.getElementById("register-name").value;
+                const username = document.getElementById("register-username").value;
+                const password = document.getElementById("register-password").value;
                 try{
                     const res = await fetch("/registration", {
                         method : "POST",
@@ -149,7 +149,7 @@
                     const data = await res.json();
                     if (res.ok){
                         alert("Account created successfully. ");
-                        window.location.href = "/index.html";
+                        window.location.href = "/views/index.html";
                     } else{
                         alert(data.message);
                     }
