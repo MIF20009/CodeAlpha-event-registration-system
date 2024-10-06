@@ -8,6 +8,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files from the "views" directory
+app.use(express.static(path.join(__dirname, 'views')));
+
 // Connect to MongoDB (make sure MongoDB is running)
 mongoose.connect('mongodb://localhost:27017/event-registration-system', {
     useNewUrlParser: true,

@@ -125,8 +125,9 @@
                     });
                     const data = await res.json();
                     if (res.ok){
-                        alert("Login successfull. ")
-                        window.location.href = "/views/events.html"
+                        alert("Login successfull. ");
+                        localStorage.setItem("token", data.token);
+                        window.location.href = "/events.html";
                     } else{
                         alert(data.message);
                     }
@@ -149,7 +150,7 @@
                     const data = await res.json();
                     if (res.ok){
                         alert("Account created successfully. ");
-                        window.location.href = "/views/index.html";
+                        window.location.href = "/index.html";
                     } else{
                         alert(data.message);
                     }

@@ -57,7 +57,7 @@
             <button id="registered-events-btn">View Registered Events</button>
             <button id="logout">Logout</button>
         </div>
-        <button id="admin-panel" style="display: block;">Go To Admin Panel</button>
+        <button id="admin-panel" style="display: none;">Go To Admin Panel</button>
         <script>
             const token = localStorage.getItem("token");
 
@@ -78,7 +78,7 @@
             checkAdmin();
             
             document.getElementById("admin-panel").addEventListener("click", () => {
-                window.location.href = "/views/admin.html";  
+                window.location.href = "/admin.html";  
             });
 
             const fetchEvents = async () => {
@@ -142,11 +142,11 @@
 
             document.getElementById("logout").addEventListener("click", () => {
                 localStorage.removeItem("token");
-                window.location.href = "/views/index.html";
+                window.location.href = "/index.html";
             });
 
             document.getElementById("registered-events-btn").addEventListener("click", () => {
-                window.location.href = "/views/registered-events.html";
+                window.location.href = "/registered-events.html";
             });
 
             fetchEvents();

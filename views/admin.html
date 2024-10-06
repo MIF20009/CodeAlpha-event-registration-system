@@ -68,11 +68,11 @@
                     const data = await res.json();
                     if (res.ok && !data.isAdmin){
                         alert("Access denied. Admins only. ");
-                        window.location.href = "/views/index.html";
+                        window.location.href = "/index.html";
                     }
                 } catch(err){
                     console.error("Error verifying admin: ",err);
-                    window.location.href = "/views/index.html";
+                    window.location.href = "/index.html";
                 }
             };
 
@@ -110,7 +110,7 @@
 
             document.getElementById("logout").addEventListener("click", () => {
                 localStorage.removeItem("token");
-                window.location.href = "/views/index.html";
+                window.location.href = "/index.html";
             });
         </script>
     </body>
